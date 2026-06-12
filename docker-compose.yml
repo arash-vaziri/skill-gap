@@ -1,0 +1,36 @@
+
+services:
+  db:
+    image: mysql:8.1.0
+    container_name: db
+    restart: always
+    volumes:
+      - /srv/mysql/db:/var/lib/mysql/data
+    configs:
+      - source: dbconfigfile
+        target: /etc/mysql/conf.d/data-src.cnf
+    ports:
+      - ${MYSQL_PORT}:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    networks:
+      - main_network
+
+  api:
+    image: node-os
+    container_name: backend
+    hostname: node-os
+    ports:
+      - 3000:3000
+
+    user: node 
+    volumes:
+      - ./backend:/home/node/www
+
+    restart: always
+    networks:
+      - main_network
+
+configs:
+  dbconfigfile:
+    file: ./data-src.cnf
