@@ -1,35 +1,37 @@
 
 services:
   db:
-    image: mysql:8.1.0
+    image: postgres:17.10-alpine
     container_name: db
-    restart: always
-    volumes:
-      - /srv/mysql/db:/var/lib/mysql/data
-    configs:
-      - source: dbconfigfile
-        target: /etc/mysql/conf.d/data-src.cnf
-    ports:
-      - ${MYSQL_PORT}:3306
+    restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    networks:
-      - main_network
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
 
   api:
-    image: node-os
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_USER: ${APP_USER}
+        APP_UID: ${APP_UID}
+        APP_GID: ${APP_GID}
     container_name: backend
-    hostname: node-os
-    ports:
-      - 3000:3000
-
-    user: node 
+    hostname: py-os
+    working_dir: /app
+    user: "${APP_UID}:${APP_GID}"
     volumes:
-      - ./backend:/home/node/www
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    
+    command: tail -f /dev/null
 
-    restart: always
-    networks:
-      - main_network
 
 configs:
   dbconfigfile:
