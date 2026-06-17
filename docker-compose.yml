@@ -29,6 +29,8 @@ services:
       - ./backend:/app
     ports:
       - "8000:8000"
+    environment:
+      PIPENV_VENV_IN_PROJECT: 1
     
     command: tail -f /dev/null
 

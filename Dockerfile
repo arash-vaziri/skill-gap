@@ -14,6 +14,12 @@ WORKDIR /app
 
 RUN chown -R ${APP_USER}:${APP_USER} /app
 
+# Upgrade the pip in case
+RUN pip install --upgrade pip
+
+# Install pipenv
+RUN pip install pipenv
+
 USER ${APP_USER}
 
 CMD ["bash"]
