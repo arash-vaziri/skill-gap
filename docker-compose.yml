@@ -13,28 +13,6 @@ services:
     volumes:
       - ./db:/var/lib/postgresql/data
 
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        APP_USER: ${APP_USER}
-        APP_UID: ${APP_UID}
-        APP_GID: ${APP_GID}
-    container_name: backend
-    hostname: py-os
-    working_dir: /app
-    user: "${APP_UID}:${APP_GID}"
-    volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
-    environment:
-      PIPENV_VENV_IN_PROJECT: 1
-    
-    command: tail -f /dev/null
-
-
 configs:
   dbconfigfile:
     file: ./data-src.cnf
